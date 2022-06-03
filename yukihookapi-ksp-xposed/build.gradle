@@ -1,0 +1,82 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.google.devtools.ksp' version '1.6.21-1.0.5'
+    id 'maven-publish'
+    id 'signing'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withJavadocJar()
+    withSourcesJar()
+}
+
+javadoc {
+    options.addStringOption("charset", "UTF-8")
+    if (JavaVersion.current().isJava9Compatible()) options.addBooleanOption('html5', true)
+}
+
+kotlin { sourceSets.main { kotlin.srcDir("src/api/kotlin") } }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = 11
+    }
+}
+
+dependencies {
+    implementation 'com.google.auto.service:auto-service-annotations:1.0.1'
+    compileOnly 'com.google.devtools.ksp:symbol-processing-api:1.6.21-1.0.5'
+    ksp 'dev.zacsweers.autoservice:auto-service-ksp:1.0.0'
+}
+
+group = rootProject.ext.groupId
+version = rootProject.ext.apiVersion
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'ksp-xposed'
+            from components.java
+            pom {
+                name = rootProject.ext.repoName
+                description = rootProject.ext.repoDescription
+                url = rootProject.ext.website
+                licenses {
+                    license {
+                        name = rootProject.ext.licenceName
+                        url = rootProject.ext.licenceUrl
+                    }
+                }
+                developers {
+                    developer {
+                        id = rootProject.ext.devId
+                        name = rootProject.ext.devUser
+                        email = rootProject.ext.userEmail
+                    }
+                }
+                scm {
+                    connection = rootProject.ext.githubConnection
+                    developerConnection = rootProject.ext.githubDeveloperConnection
+                    url = rootProject.ext.githubUrl
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = rootProject.ext.ossName
+            url = rootProject.ext.ossUrl
+            credentials {
+                username = getFileContent("OSSRH_USERNAME")
+                password = getFileContent("OSSRH_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications.mavenJava)
+}

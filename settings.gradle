@@ -16,3 +16,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "TSBattery"
 include ':app'
+include ':demo-module'
+include ':yukihookapi-ksp-xposed'
+include ':yukihookapi'
+include ':demo-app'

@@ -54,7 +54,7 @@ import com.highcapable.yukihookapi.hook.type.android.*
 import com.highcapable.yukihookapi.hook.type.java.*
 import com.highcapable.yukihookapi.hook.xposed.proxy.IYukiHookXposedInit
 
-@InjectYukiHookWithXposed(isUsingResourcesHook = false)
+@InjectYukiHookWithXposed
 class HookEntry : IYukiHookXposedInit {
 
     companion object {
